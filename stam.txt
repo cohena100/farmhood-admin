@@ -1,0 +1,45 @@
+ ShimGen has successfully created a shim for ngrok.exe
+ The install of ngrok was successful.
+  Software installed to 'C:\ProgramData\chocolatey\lib\ngrok\tools'
+
+Chocolatey installed 1/1 packages.
+ See the log for details (C:\ProgramData\chocolatey\logs\chocolatey.log).
+
+
+
+*********
+Windows PowerShell history command:
+cat (Get-PSReadlineOption).HistorySavePath
+notepad (Get-PSReadlineOption).HistorySavePath
+*********
+*********
+ngrok http --domain=forcibly-pure-garfish.ngrok-free.app 3000
+*********
+*********
+npx prisma studio
+
+npx prisma generate
+npx prisma db push
+
+npx prisma db push --force-reset
+
+*********
+*********
+Windows PowerShell:
+cd C:\Users\cohen\Documents\develop\mine\farmhood
+rm -r -fo .\.next\
+rm -r -fo .\node_modules\
+*********
+*********
+node .\scripts\seed.ts
+*********
+VSCODE
+Ctrl+D or Ctrl+Shift+L
+**************************
+await new Promise((res) => setTimeout(res, 2000));
+
+**************************
+            {new Intl.NumberFormat("he-IL", {
+              style: "currency",
+              currency: "ILS",
+            }).format(100)}
