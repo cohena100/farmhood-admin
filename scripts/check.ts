@@ -3,20 +3,30 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const products = await prisma.product.findMany();
-  const selection = Object.fromEntries(
-    products.map((product) => [product.id, 0])
-  );
-  const order = await prisma.order.findUnique({
-    where: { authId: "user_2cwkL0VUgBxHlJLZWOck84CgHG2" },
-    include: { products: true },
-  });
-  if (order && order.products) {
-    for (const p of order.products) {
-      selection[p.productId] = p.quantity;
-    }
-  }
-  console.log(selection);
+  // const groups = await prisma.orderProduct.groupBy({
+  //   by: ["productId"],
+  //   _sum: { quantity: true },
+  // });
+  // console.log(groups);
+  // const groupBy = await prisma.user.groupBy({
+  //   by: ['city'],
+  //   _count: {
+  //     city: true,
+  //   },
+  //   orderBy: {
+  //     _count: {
+  //       city: 'desc',
+  //     },
+  //   },select "ProductId" from "OrderProduct";
+  // })
+  const g = await prisma.$queryRaw`
+SELECT p.title,
+       Cast(Sum(o.quantity)AS INTEGER)
+FROM "Product" p
+INNER JOIN "OrderProduct" o ON p.id = o."productId"
+GROUP BY p.id`;
+  console.log(JSON.stringify(g, null, "\t"));
+  // console.log(g);
 }
 
 main()

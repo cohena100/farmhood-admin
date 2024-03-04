@@ -1,4 +1,8 @@
 "use strict";
+var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
+    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
+    return cooked;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -40,26 +44,13 @@ var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var products, selection, order, _i, _a, p;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4 /*yield*/, prisma.product.findMany()];
+        var g;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, prisma.$queryRaw(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\nSELECT p.title,\n       Cast(Sum(o.quantity)AS INTEGER)\nFROM \"Product\" p\nINNER JOIN \"OrderProduct\" o ON p.id = o.\"productId\"\nGROUP BY p.id"], ["\nSELECT p.title,\n       Cast(Sum(o.quantity)AS INTEGER)\nFROM \"Product\" p\nINNER JOIN \"OrderProduct\" o ON p.id = o.\"productId\"\nGROUP BY p.id"])))];
                 case 1:
-                    products = _b.sent();
-                    selection = Object.fromEntries(products.map(function (product) { return [product.id, 0]; }));
-                    return [4 /*yield*/, prisma.order.findUnique({
-                            where: { authId: "user_2cwkL0VUgBxHlJLZWOck84CgHG2" },
-                            include: { products: true },
-                        })];
-                case 2:
-                    order = _b.sent();
-                    if (order && order.products) {
-                        for (_i = 0, _a = order.products; _i < _a.length; _i++) {
-                            p = _a[_i];
-                            selection[p.productId] = p.quantity;
-                        }
-                    }
-                    console.log(selection);
+                    g = _a.sent();
+                    console.log(JSON.stringify(g, null, "\t"));
                     return [2 /*return*/];
             }
         });
@@ -89,3 +80,4 @@ main()
         }
     });
 }); });
+var templateObject_1;
