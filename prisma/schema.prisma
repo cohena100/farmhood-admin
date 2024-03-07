@@ -18,18 +18,20 @@ model Product {
 }
 
 model Order {
-  authId   String         @id
-  name     String
-  email    String
-  products OrderProduct[]
+  id             String         @id
+  firstName      String?
+  lastName       String?
+  imageUrl       String?
+  emailAddresses String[]
+  products       OrderProduct[]
 }
 
 model OrderProduct {
-  order       Order   @relation(fields: [orderAuthId], references: [authId], onDelete: Cascade)
-  orderAuthId String
-  product     Product @relation(fields: [productId], references: [id])
-  productId   String
-  quantity    Int
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int
 
-  @@id([orderAuthId, productId])
+  @@id([orderId, productId])
 }

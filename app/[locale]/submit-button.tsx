@@ -1,6 +1,6 @@
 "use client";
 
-import { submitForm } from "@/lib/actions";
+import { closeOrder } from "@/lib/actions";
 import { useFormState, useFormStatus } from "react-dom";
 import { Alert, Button } from "flowbite-react";
 import { cn } from "@/lib/utils";
@@ -17,7 +17,7 @@ interface SubmitButtonProps {
 }
 
 export function SubmitButton({ className, label }: SubmitButtonProps) {
-  const [state, formAction] = useFormState(submitForm, initialState);
+  const [state, formAction] = useFormState(closeOrder, initialState);
   const { pending } = useFormStatus();
   const [message, setMessage] = useState(false);
   useEffect(() => {
