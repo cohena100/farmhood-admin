@@ -28,7 +28,7 @@ export default async function Home() {
   return (
     <main className="flex flex-col m-4 gap-2">
       {orders.map((order) => (
-        <Card key={order.id} className="max-w-fit">
+        <Card key={order.id} className="max-w-screen-sm">
           <Avatar img={order.imageUrl ?? ""} className="max-w-fit" rounded>
             <div className="ms-2 space-y-1 font-medium dark:text-white">
               <div>{order.firstName + " " + order.lastName}</div>
