@@ -1,15 +1,9 @@
 "use client";
 
 import { closeOrder } from "@/lib/actions";
-import { useFormState, useFormStatus } from "react-dom";
-import { Alert, Button } from "flowbite-react";
+import { Button } from "flowbite-react";
 import { cn } from "@/lib/utils";
-import { useEffect, useState, useTransition } from "react";
-
-const initialState = {
-  success: true,
-  message: "",
-};
+import { useTransition } from "react";
 
 interface ActionButtonProps {
   className: string | null;
