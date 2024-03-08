@@ -13,21 +13,43 @@ import {
 import { Link } from "@/navigation";
 import { Metadata } from "next";
 import { ActionButton } from "./action-button";
+import { Prisma } from "@prisma/client";
+import OrderSelect from "./order-select";
 
 export const metadata: Metadata = {
   title: "Orders",
 };
 
-export default async function Home() {
+interface OrdersPageProps {
+  searchParams?: {
+    id?: string;
+  };
+}
+
+export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const user = await currentUser();
   if (!user) notFound();
+  const order = searchParams?.id
+    ? await prisma.order.findUnique({
+        where: { id: searchParams?.id },
+        include: { products: { include: { product: true } } },
+      })
+    : null;
   const orders = await prisma.order.findMany({
     include: { products: { include: { product: true } } },
   });
+  const filteredOrders = order ? [order] : orders;
   const t = await getTranslations("home");
   return (
     <main className="flex flex-col m-4 gap-2">
-      {orders.map((order) => (
+      <OrderSelect
+        defaultValue={""}
+        options={orders.map(({ id, firstName, lastName }) => ({
+          id,
+          fullname: firstName + " " + lastName,
+        }))}
+      />
+      {filteredOrders.map((order) => (
         <Card key={order.id} className="max-w-screen-sm">
           <Avatar img={order.imageUrl ?? ""} className="max-w-fit" rounded>
             <div className="ms-2 space-y-1 font-medium dark:text-white">
