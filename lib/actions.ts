@@ -10,6 +10,6 @@ export async function closeOrder(id: string) {
     notFound();
   }
   await prisma.order.delete({ where: { id } }).catch(() => {});
-  revalidatePath("/[locale]/orders");
+  revalidatePath("/[locale]/orders", "page");
   // revalidatePath("/[locale]/");
 }
