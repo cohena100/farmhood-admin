@@ -27,6 +27,7 @@ model ParkingLot {
   id       String    @id @default(uuid())
   name     String
   profiles Profile[]
+  orders   Order[]
 }
 
 model Order {
@@ -36,6 +37,8 @@ model Order {
   imageUrl       String?
   emailAddresses String[]
   products       OrderProduct[]
+  parkingLot     ParkingLot     @relation(fields: [parkingLotId], references: [id])
+  parkingLotId   String
 }
 
 model OrderProduct {
