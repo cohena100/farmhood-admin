@@ -17,6 +17,18 @@ model Product {
   orders OrderProduct[]
 }
 
+model Profile {
+  id           String     @unique
+  parkingLot   ParkingLot @relation(fields: [parkingLotId], references: [id])
+  parkingLotId String
+}
+
+model ParkingLot {
+  id       String    @id @default(uuid())
+  name     String
+  profiles Profile[]
+}
+
 model Order {
   id             String         @id
   firstName      String?
