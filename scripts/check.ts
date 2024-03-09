@@ -27,14 +27,21 @@ async function main() {
   // GROUP BY p.id`;
   //   console.log(JSON.stringify(g, null, "\t"));
   // console.log(g);
-  const parkingLotCount = await prisma.parkingLot.findMany({
-    include: {
-      _count: {
-        select: { orders: true },
-      },
-    },
+  // const parkingLotCount = await prisma.parkingLot.findMany({
+  //   include: {
+  //     _count: {
+  //       select: { orders: true },
+  //     },
+  //   },
+  // });
+  // console.log(parkingLotCount);
+  // const orders = await prisma.order.findMany({
+  //   include: { products: { include: { product: true } }, parkingLot: true },
+  // });
+  const orders = await prisma.order.findMany({
+    include: { products: { include: { product: true } }, parkingLot: true },
   });
-  console.log(parkingLotCount);
+  console.log(orders);
 }
 
 main()

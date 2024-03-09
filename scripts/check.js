@@ -40,19 +40,15 @@ var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var parkingLotCount;
+        var orders;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma.parkingLot.findMany({
-                        include: {
-                            _count: {
-                                select: { orders: true },
-                            },
-                        },
+                case 0: return [4 /*yield*/, prisma.order.findMany({
+                        include: { products: { include: { product: true } }, parkingLot: true },
                     })];
                 case 1:
-                    parkingLotCount = _a.sent();
-                    console.log(parkingLotCount);
+                    orders = _a.sent();
+                    console.log(orders);
                     return [2 /*return*/];
             }
         });

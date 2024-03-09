@@ -32,11 +32,11 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const order = searchParams?.id
     ? await prisma.order.findUnique({
         where: { id: searchParams?.id },
-        include: { products: { include: { product: true } } },
+        include: { products: { include: { product: true } }, parkingLot: true },
       })
     : null;
   const orders = await prisma.order.findMany({
-    include: { products: { include: { product: true } } },
+    include: { products: { include: { product: true } }, parkingLot: true },
   });
   const filteredOrders = order ? [order] : orders;
   const t = await getTranslations("home");
@@ -56,6 +56,9 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
               <div>{order.firstName + " " + order.lastName}</div>
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 {order.emailAddresses[0]}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {t(order.parkingLot.name)}
               </div>
             </div>
           </Avatar>
