@@ -13,7 +13,7 @@ export default async function Home() {
 SELECT p.title,
        Cast(Sum(o.quantity)AS INTEGER)
 FROM "Product" p
-LEFT JOIN "OrderProduct" o ON p.id = o."productId"
+JOIN "OrderProduct" o ON p.id = o."productId"
 GROUP BY p.id`;
   const parkingLots = await prisma.parkingLot.findMany({
     include: {
