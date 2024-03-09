@@ -1,8 +1,4 @@
 "use strict";
-var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -44,13 +40,19 @@ var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var g;
+        var parkingLotCount;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma.$queryRaw(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\nSELECT p.title,\n       Cast(Sum(o.quantity)AS INTEGER)\nFROM \"Product\" p\nINNER JOIN \"OrderProduct\" o ON p.id = o.\"productId\"\nGROUP BY p.id"], ["\nSELECT p.title,\n       Cast(Sum(o.quantity)AS INTEGER)\nFROM \"Product\" p\nINNER JOIN \"OrderProduct\" o ON p.id = o.\"productId\"\nGROUP BY p.id"])))];
+                case 0: return [4 /*yield*/, prisma.parkingLot.findMany({
+                        include: {
+                            _count: {
+                                select: { orders: true },
+                            },
+                        },
+                    })];
                 case 1:
-                    g = _a.sent();
-                    console.log(JSON.stringify(g, null, "\t"));
+                    parkingLotCount = _a.sent();
+                    console.log(parkingLotCount);
                     return [2 /*return*/];
             }
         });
@@ -80,4 +82,3 @@ main()
         }
     });
 }); });
-var templateObject_1;

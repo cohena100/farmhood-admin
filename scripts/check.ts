@@ -19,14 +19,22 @@ async function main() {
   //     },
   //   },select "ProductId" from "OrderProduct";
   // })
-  const g = await prisma.$queryRaw`
-SELECT p.title,
-       Cast(Sum(o.quantity)AS INTEGER)
-FROM "Product" p
-INNER JOIN "OrderProduct" o ON p.id = o."productId"
-GROUP BY p.id`;
-  console.log(JSON.stringify(g, null, "\t"));
+  //   const g = await prisma.$queryRaw`
+  // SELECT p.title,
+  //        Cast(Sum(o.quantity)AS INTEGER)
+  // FROM "Product" p
+  // INNER JOIN "OrderProduct" o ON p.id = o."productId"
+  // GROUP BY p.id`;
+  //   console.log(JSON.stringify(g, null, "\t"));
   // console.log(g);
+  const parkingLotCount = await prisma.parkingLot.findMany({
+    include: {
+      _count: {
+        select: { orders: true },
+      },
+    },
+  });
+  console.log(parkingLotCount);
 }
 
 main()
