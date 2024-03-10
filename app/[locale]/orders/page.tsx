@@ -37,6 +37,14 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
     : null;
   const orders = await prisma.order.findMany({
     include: { products: { include: { product: true } }, parkingLot: true },
+    orderBy: [
+      {
+        firstName: "asc",
+      },
+      {
+        lastName: "desc",
+      },
+    ],
   });
   const filteredOrders = order ? [order] : orders;
   const t = await getTranslations("home");

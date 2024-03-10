@@ -39,6 +39,8 @@ model Order {
   products       OrderProduct[]
   parkingLot     ParkingLot     @relation(fields: [parkingLotId], references: [id])
   parkingLotId   String
+
+  @@index([firstName, lastName])
 }
 
 model OrderProduct {
