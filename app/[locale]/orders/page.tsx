@@ -13,7 +13,6 @@ import {
 import { Link } from "@/navigation";
 import { Metadata } from "next";
 import { ActionButton } from "./action-button";
-import { Prisma } from "@prisma/client";
 import OrderSelect from "./order-select";
 
 export const metadata: Metadata = {
@@ -39,10 +38,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
     include: { products: { include: { product: true } }, parkingLot: true },
     orderBy: [
       {
-        firstName: "asc",
-      },
-      {
-        lastName: "desc",
+        name: "asc",
       },
     ],
   });
@@ -52,18 +48,18 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
     <main className="flex flex-col m-4 gap-2">
       <OrderSelect
         defaultValue={""}
-        options={orders.map(({ id, firstName, lastName }) => ({
+        options={orders.map(({ id, name }) => ({
           id,
-          fullname: firstName + " " + lastName,
+          name,
         }))}
       />
       {filteredOrders.map((order) => (
         <Card key={order.id} className="max-w-screen-sm">
           <Avatar img={order.imageUrl ?? ""} className="max-w-fit" rounded>
             <div className="ms-2 space-y-1 font-medium dark:text-white">
-              <div>{order.firstName + " " + order.lastName}</div>
+              <div>{order.name}</div>
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                {order.emailAddresses[0]}
+                {order.phone}
               </div>
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 {t(order.parkingLot.name)}

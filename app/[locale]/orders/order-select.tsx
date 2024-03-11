@@ -8,7 +8,7 @@ import { useTranslations } from "next-intl";
 
 interface Props {
   defaultValue: string;
-  options: { id: string; fullname: string }[];
+  options: { id: string; name: string }[];
 }
 
 export default function OrderSelect({ defaultValue, options }: Props) {
@@ -40,7 +40,7 @@ export default function OrderSelect({ defaultValue, options }: Props) {
       <option value="">{t("Orders")}</option>
       {options.map((option) => (
         <option key={option.id} value={option.id}>
-          {option.fullname}
+          {option.name}
         </option>
       ))}
     </Select>

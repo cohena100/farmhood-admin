@@ -12,13 +12,16 @@ datasource db {
 }
 
 model Product {
-  id     String         @id @default(uuid())
-  title  String
-  orders OrderProduct[]
+  id      String         @id @default(uuid())
+  title   String
+  options Int[]
+  orders  OrderProduct[]
 }
 
 model Profile {
   id           String     @unique
+  name         String
+  phone        String
   parkingLot   ParkingLot @relation(fields: [parkingLotId], references: [id])
   parkingLotId String
 }
@@ -31,16 +34,15 @@ model ParkingLot {
 }
 
 model Order {
-  id             String         @id
-  firstName      String?
-  lastName       String?
-  imageUrl       String?
-  emailAddresses String[]
-  products       OrderProduct[]
-  parkingLot     ParkingLot     @relation(fields: [parkingLotId], references: [id])
-  parkingLotId   String
+  id           String         @id
+  name         String
+  imageUrl     String?
+  phone        String
+  products     OrderProduct[]
+  parkingLot   ParkingLot     @relation(fields: [parkingLotId], references: [id])
+  parkingLotId String
 
-  @@index([firstName, lastName])
+  @@index([name])
 }
 
 model OrderProduct {
