@@ -67,36 +67,38 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
           name,
         }))}
       />
-      {filteredOrders.map((order) => (
-        <Card key={order.id} className="max-w-screen-sm">
-          <Avatar img={order.imageUrl ?? ""} className="max-w-fit" rounded>
-            <div className="ms-2 space-y-1 font-medium dark:text-white">
-              <div>{order.name}</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                {order.phone}
+      <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
+        {filteredOrders.map((order) => (
+          <Card key={order.id}>
+            <Avatar img={order.imageUrl ?? ""} className="max-w-fit" rounded>
+              <div className="ms-2 space-y-1 font-medium dark:text-white">
+                <div>{order.name}</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  {order.phone}
+                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  {t(order.parkingLot.name)}
+                </div>
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                {t(order.parkingLot.name)}
-              </div>
-            </div>
-          </Avatar>
-          <Table>
-            <TableBody className="divide-y text-start">
-              {order.products.map((product) => (
-                <TableRow key={product.productId}>
-                  <TableCell>{t(product.product.title)}</TableCell>
-                  <TableCell>{product.quantity}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <ActionButton
-            className="self-start mb-4"
-            label={t("Sell")}
-            id={order.id}
-          />
-        </Card>
-      ))}
+            </Avatar>
+            <Table>
+              <TableBody className="divide-y text-start">
+                {order.products.map((product) => (
+                  <TableRow key={product.productId}>
+                    <TableCell>{t(product.product.title)}</TableCell>
+                    <TableCell>{product.quantity}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <ActionButton
+              className="self-start mb-4"
+              label={t("Sell")}
+              id={order.id}
+            />
+          </Card>
+        ))}
+      </div>
       <Link
         href="/"
         className="font-medium text-pink-600 dark:text-pink-500 underline my-4"
