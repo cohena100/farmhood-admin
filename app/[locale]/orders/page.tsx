@@ -28,12 +28,13 @@ interface OrdersPageProps {
 export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const user = await currentUser();
   if (!user) notFound();
-  const order = searchParams?.id
-    ? await prisma.order.findUnique({
-        where: { id: searchParams?.id },
-        include: { products: { include: { product: true } }, parkingLot: true },
-      })
-    : null;
+  const id = searchParams?.id;
+  const order = await prisma.order
+    .findUnique({
+      where: { id },
+      include: { products: { include: { product: true } }, parkingLot: true },
+    })
+    .catch(() => undefined);
   const orders = await prisma.order.findMany({
     include: { products: { include: { product: true } }, parkingLot: true },
     orderBy: [
@@ -42,13 +43,26 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
       },
     ],
   });
-  const filteredOrders = order ? [order] : orders;
+  const filteredOrders = order
+    ? [order]
+    : await prisma.order.findMany({
+        where: { parkingLotId: id },
+        include: { products: { include: { product: true } }, parkingLot: true },
+        orderBy: [
+          {
+            name: "asc",
+          },
+        ],
+      });
   const t = await getTranslations("home");
+  const parkingLots = (await prisma.parkingLot.findMany()).map(
+    ({ id, name }) => ({ id, name: t(name) })
+  );
   return (
     <main className="flex flex-col m-4 gap-2">
       <OrderSelect
-        defaultValue={""}
-        options={orders.map(({ id, name }) => ({
+        defaultValue={id ?? ""}
+        options={[...parkingLots, ...orders].map(({ id, name }) => ({
           id,
           name,
         }))}
