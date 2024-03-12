@@ -2,8 +2,17 @@ import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prismadb";
 import { currentUser } from "@clerk/nextjs";
 import { notFound } from "next/navigation";
-import { Table, TableBody, TableCell, TableRow } from "flowbite-react";
+import {
+  Avatar,
+  Card,
+  Label,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from "flowbite-react";
 import { Link } from "@/navigation";
+import { ActionButton } from "./orders/action-button";
 
 export default async function Home() {
   const user = await currentUser();
@@ -21,6 +30,23 @@ GROUP BY p.id`;
         select: { orders: true },
       },
     },
+  });
+  const unusualOrders = await prisma.order.findMany({
+    where: {
+      products: {
+        some: {
+          quantity: {
+            gt: 4,
+          },
+        },
+      },
+    },
+    include: { products: { include: { product: true } }, parkingLot: true },
+    orderBy: [
+      {
+        name: "asc",
+      },
+    ],
   });
   const t = await getTranslations("home");
   return (
@@ -51,6 +77,42 @@ GROUP BY p.id`;
           </TableBody>
         </Table>
       </div>
+      {unusualOrders.length > 0 && (
+        <Label
+          value={t("Unusual orders") + ":"}
+          className="my-4 font-bold text-lg  text-pink-600 dark:text-pink-500 "
+        />
+      )}
+      {unusualOrders.map((order) => (
+        <Card key={order.id} className="max-w-fit">
+          <Avatar img={order.imageUrl ?? ""} className="max-w-fit" rounded>
+            <div className="ms-2 space-y-1 font-medium dark:text-white">
+              <div>{order.name}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {order.phone}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {t(order.parkingLot.name)}
+              </div>
+            </div>
+          </Avatar>
+          <Table>
+            <TableBody className="divide-y text-start">
+              {order.products.map((product) => (
+                <TableRow key={product.productId}>
+                  <TableCell>{t(product.product.title)}</TableCell>
+                  <TableCell>{product.quantity}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <ActionButton
+            className="self-start mb-4"
+            label={t("Sell")}
+            id={order.id}
+          />
+        </Card>
+      ))}
       <Link
         href="/orders"
         className="font-medium text-pink-600 dark:text-pink-500 underline my-4"
