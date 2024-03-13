@@ -4,6 +4,7 @@ import { currentUser } from "@clerk/nextjs";
 import { notFound } from "next/navigation";
 import {
   Avatar,
+  Badge,
   Card,
   Label,
   Table,
@@ -101,7 +102,13 @@ GROUP BY p.id`;
               {order.products.map((product) => (
                 <TableRow key={product.productId}>
                   <TableCell>{t(product.product.title)}</TableCell>
-                  <TableCell>{product.quantity}</TableCell>
+                  <TableCell>
+                    {product.quantity > 4 ? (
+                      <Badge color="pink">{product.quantity}</Badge>
+                    ) : (
+                      product.quantity
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
