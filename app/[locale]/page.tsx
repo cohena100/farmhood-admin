@@ -102,7 +102,7 @@ GROUP BY p.id`;
               {order.products.map((product) => (
                 <TableRow key={product.productId}>
                   <TableCell>{t(product.product.title)}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     {product.quantity > 4 ? (
                       <Badge color="pink">{product.quantity}</Badge>
                     ) : (
