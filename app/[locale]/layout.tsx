@@ -1,8 +1,12 @@
-import { NextIntlClientProvider, useMessages } from "next-intl";
+import {
+  NextIntlClientProvider,
+  useMessages,
+  useTranslations,
+} from "next-intl";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/app/globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, Protect } from "@clerk/nextjs";
 import { enUS, deDE, heIL, ruRU } from "@clerk/localizations";
 import { ThemeModeScript } from "flowbite-react";
 import {
@@ -45,8 +49,8 @@ export default function RootLayout({
     re: ruRU,
     he: heIL,
   };
+  const t = useTranslations("home");
   const direction = useTextDirection(locale);
-
   return (
     <ClerkProvider localization={clerkLocale[locale]}>
       <html lang={locale} dir={direction} suppressHydrationWarning>
@@ -71,7 +75,20 @@ export default function RootLayout({
                   </div>
                 </NavbarCollapse>
               </Navbar>
-              {children}
+              <Protect
+                role="org:admin"
+                fallback={
+                  <div className="fixed top-0 left-0 bottom-0 translate-x-1/2 translate-y-1/2 w-1/2">
+                    <Label>
+                      {t(
+                        "You have reached the management site. Please ask for a link to the orders site. Thanks."
+                      )}
+                    </Label>
+                  </div>
+                }
+              >
+                {children}
+              </Protect>
             </Flowbite>
           </body>
         </NextIntlClientProvider>
