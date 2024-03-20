@@ -78,7 +78,7 @@ export default function RootLayout({
               <Protect
                 role="org:admin"
                 fallback={
-                  <div className="fixed top-0 left-0 bottom-0 translate-x-1/2 translate-y-1/2 w-1/2">
+                  <div className="fixed top-0 left-0 bottom-0 translate-x-1/2 translate-y-1/2 w-1/2 text-center">
                     <Label>
                       {t(
                         "You have reached the management site. Please ask for a link to the orders site. Thanks."
