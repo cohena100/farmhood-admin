@@ -43,3 +43,5 @@ await new Promise((res) => setTimeout(res, 2000));
               style: "currency",
               currency: "ILS",
             }).format(100)}
+
+Cry of the Nihilist, Blooddrunk, Roadkill Morning, Taste of my Scythe, Hexed

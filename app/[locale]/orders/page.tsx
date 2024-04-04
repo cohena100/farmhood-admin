@@ -1,10 +1,11 @@
 import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prismadb";
-import { currentUser } from "@clerk/nextjs";
+import { Protect, currentUser } from "@clerk/nextjs";
 import { notFound } from "next/navigation";
 import {
   Avatar,
   Card,
+  Label,
   Table,
   TableBody,
   TableCell,
@@ -92,11 +93,20 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
                   ))}
                 </TableBody>
               </Table>
-              <ActionButton
-                className="self-start mb-4 mt-auto"
-                label={t("Sell")}
-                id={order.id}
-              />
+              <Protect
+                role="org:admin"
+                fallback={
+                  <Label color="failure" className="self-start mb-4 mt-auto">
+                    {t("You are not authorized to perform actions on orders.")}
+                  </Label>
+                }
+              >
+                <ActionButton
+                  className="self-start mb-4 mt-auto"
+                  label={t("Sell")}
+                  id={order.id}
+                />
+              </Protect>
             </div>
           </Card>
         ))}
