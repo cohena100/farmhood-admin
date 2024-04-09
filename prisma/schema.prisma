@@ -19,7 +19,7 @@ model Product {
 }
 
 model Profile {
-  id           String     @unique
+  id           String     @id
   name         String
   phone        String
   parkingLot   ParkingLot @relation(fields: [parkingLotId], references: [id])
@@ -34,15 +34,26 @@ model ParkingLot {
 }
 
 model Order {
-  id           String         @id
+  id           String         @id @default(uuid())
+  userId       String
   name         String
-  imageUrl     String?
+  imageUrl     String
   phone        String
   products     OrderProduct[]
   parkingLot   ParkingLot     @relation(fields: [parkingLotId], references: [id])
   parkingLotId String
+  status       Status
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
 
   @@index([name])
+}
+
+enum Status {
+  OPEN
+  PAID
+  DONE
+  ABANDONED
 }
 
 model OrderProduct {

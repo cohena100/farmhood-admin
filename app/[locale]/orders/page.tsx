@@ -15,6 +15,7 @@ import { Link } from "@/navigation";
 import { Metadata } from "next";
 import { ActionButton } from "./action-button";
 import OrderSelect from "./order-select";
+import { Status } from "@prisma/client";
 
 export const metadata: Metadata = {
   title: "Orders",
@@ -30,13 +31,34 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const user = await currentUser();
   if (!user) notFound();
   const id = searchParams?.id;
-  const order = await prisma.order
-    .findUnique({
-      where: { id },
+  const userOrders = await prisma.order
+    .findMany({
+      where: {
+        userId: id,
+        OR: [
+          {
+            status: Status.OPEN,
+          },
+          {
+            status: Status.PAID,
+          },
+        ],
+      },
       include: { products: { include: { product: true } }, parkingLot: true },
     })
-    .catch(() => undefined);
+    .catch(() => []);
   const orders = await prisma.order.findMany({
+    where: {
+      OR: [
+        {
+          status: Status.OPEN,
+        },
+        {
+          status: Status.PAID,
+        },
+      ],
+    },
+    distinct: ["userId"],
     include: { products: { include: { product: true } }, parkingLot: true },
     orderBy: [
       {
@@ -44,17 +66,31 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
       },
     ],
   });
-  const filteredOrders = order
-    ? [order]
-    : await prisma.order.findMany({
-        where: { parkingLotId: id },
-        include: { products: { include: { product: true } }, parkingLot: true },
-        orderBy: [
-          {
-            name: "asc",
+  const filteredOrders =
+    userOrders.length > 0
+      ? userOrders
+      : await prisma.order.findMany({
+          where: {
+            parkingLotId: id,
+            OR: [
+              {
+                status: Status.OPEN,
+              },
+              {
+                status: Status.PAID,
+              },
+            ],
           },
-        ],
-      });
+          include: {
+            products: { include: { product: true } },
+            parkingLot: true,
+          },
+          orderBy: [
+            {
+              name: "asc",
+            },
+          ],
+        });
   const t = await getTranslations("home");
   const parkingLots = (await prisma.parkingLot.findMany()).map(
     ({ id, name }) => ({ id, name: t(name) })
@@ -63,10 +99,16 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
     <main className="flex flex-col m-4 gap-2">
       <OrderSelect
         defaultValue={id ?? ""}
-        options={[...parkingLots, ...orders].map(({ id, name }) => ({
-          id,
-          name,
-        }))}
+        options={[
+          ...parkingLots.map(({ id, name }) => ({
+            id,
+            name,
+          })),
+          ...orders.map(({ userId, name }) => ({
+            id: userId,
+            name,
+          })),
+        ]}
       />
       <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
         {filteredOrders.map((order) => (
@@ -103,7 +145,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
               >
                 <ActionButton
                   className="self-start mb-4 mt-auto"
-                  label={t("Sell")}
+                  label={order.status == "OPEN" ? t("Sell") : t("Deliver")}
                   id={order.id}
                 />
               </Protect>

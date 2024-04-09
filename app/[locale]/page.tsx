@@ -14,6 +14,7 @@ import {
 } from "flowbite-react";
 import { Link } from "@/navigation";
 import { ActionButton } from "./orders/action-button";
+import { Status } from "@prisma/client";
 
 export default async function Home() {
   const user = await currentUser();
@@ -34,6 +35,14 @@ GROUP BY p.id`;
   });
   const unusualOrders = await prisma.order.findMany({
     where: {
+      OR: [
+        {
+          status: Status.OPEN,
+        },
+        {
+          status: Status.PAID,
+        },
+      ],
       products: {
         some: {
           quantity: {
@@ -126,7 +135,7 @@ GROUP BY p.id`;
             >
               <ActionButton
                 className="self-start mb-4 mt-auto"
-                label={t("Sell")}
+                label={order.status == "OPEN" ? t("Sell") : t("Deliver")}
                 id={order.id}
               />
             </Protect>
