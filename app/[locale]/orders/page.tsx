@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 interface OrdersPageProps {
   searchParams?: {
     id?: string;
+    status?: string;
   };
 }
 
@@ -31,32 +32,28 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const user = await currentUser();
   if (!user) notFound();
   const id = searchParams?.id;
-  const userOrders = await prisma.order
-    .findMany({
-      where: {
-        userId: id,
-        OR: [
-          {
-            status: Status.OPEN,
-          },
-          {
-            status: Status.PAID,
-          },
-        ],
-      },
-      include: { products: { include: { product: true } }, parkingLot: true },
-    })
-    .catch(() => []);
-  const orders = await prisma.order.findMany({
-    where: {
-      OR: [
+  const orderStatuses = searchParams?.status
+    ? [{ status: Status[searchParams?.status as keyof typeof Status] }]
+    : [
         {
           status: Status.OPEN,
         },
         {
           status: Status.PAID,
         },
-      ],
+      ];
+  const userOrders = await prisma.order
+    .findMany({
+      where: {
+        userId: id,
+        OR: orderStatuses,
+      },
+      include: { products: { include: { product: true } }, parkingLot: true },
+    })
+    .catch(() => []);
+  const orders = await prisma.order.findMany({
+    where: {
+      OR: orderStatuses,
     },
     distinct: ["userId"],
     include: { products: { include: { product: true } }, parkingLot: true },
@@ -72,14 +69,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
       : await prisma.order.findMany({
           where: {
             parkingLotId: id,
-            OR: [
-              {
-                status: Status.OPEN,
-              },
-              {
-                status: Status.PAID,
-              },
-            ],
+            OR: orderStatuses,
           },
           include: {
             products: { include: { product: true } },
@@ -97,19 +87,44 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   );
   return (
     <main className="flex flex-col m-4 gap-2">
-      <OrderSelect
-        defaultValue={id ?? ""}
-        options={[
-          ...parkingLots.map(({ id, name }) => ({
-            id,
-            name,
-          })),
-          ...orders.map(({ userId, name }) => ({
-            id: userId,
-            name,
-          })),
-        ]}
-      />
+      <div className="flex gap-10">
+        <OrderSelect
+          defaultValue={id ?? "1"}
+          options={[
+            {
+              id: "1",
+              name: t("Orders"),
+            },
+            ...parkingLots.map(({ id, name }) => ({
+              id,
+              name,
+            })),
+            ...orders.map(({ userId, name }) => ({
+              id: userId,
+              name,
+            })),
+          ]}
+          searchParam="id"
+        />
+        <OrderSelect
+          defaultValue={searchParams?.status ?? "1"}
+          options={[
+            {
+              id: "1",
+              name: t("Status"),
+            },
+            {
+              id: Status.OPEN,
+              name: t("Ordered"),
+            },
+            {
+              id: Status.PAID,
+              name: t("Paid"),
+            },
+          ]}
+          searchParam="status"
+        />
+      </div>
       <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
         {filteredOrders.map((order) => (
           <Card key={order.id}>

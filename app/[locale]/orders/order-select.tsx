@@ -4,15 +4,18 @@ import { ChangeEvent, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { usePathname, useRouter } from "@/navigation";
 import { Select } from "flowbite-react";
-import { useTranslations } from "next-intl";
 
 interface Props {
   defaultValue: string;
   options: { id: string; name: string }[];
+  searchParam: string;
 }
 
-export default function OrderSelect({ defaultValue, options }: Props) {
-  const t = useTranslations("home");
+export default function OrderSelect({
+  defaultValue,
+  options,
+  searchParam,
+}: Props) {
   const [pending, startTransition] = useTransition();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -20,10 +23,10 @@ export default function OrderSelect({ defaultValue, options }: Props) {
   function onSelectChange(event: ChangeEvent<HTMLSelectElement>) {
     const params = new URLSearchParams(searchParams);
     const id = event.target.value;
-    if (event.target.value) {
-      params.set("id", id);
+    if (event.target.value === "1") {
+      params.delete(searchParam);
     } else {
-      params.delete("id");
+      params.set(searchParam, id);
     }
     startTransition(() => {
       replace(`${pathname}?${params.toString()}`);
@@ -33,11 +36,10 @@ export default function OrderSelect({ defaultValue, options }: Props) {
   return (
     <Select
       defaultValue={defaultValue}
-      className="max-w-screen-sm"
       disabled={pending}
       onChange={onSelectChange}
+      className="min-w-32"
     >
-      <option value="">{t("Orders")}</option>
       {options.map((option) => (
         <option key={option.id} value={option.id}>
           {option.name}
