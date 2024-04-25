@@ -1,11 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prismadb";
-import { Protect, currentUser } from "@clerk/nextjs";
-import { notFound } from "next/navigation";
 import {
   Avatar,
   Card,
-  Label,
   Table,
   TableBody,
   TableCell,
@@ -13,8 +10,8 @@ import {
 } from "flowbite-react";
 import { Link } from "@/navigation";
 import { Metadata } from "next";
-import { ActionButton } from "./action-button";
-import OrderSelect from "./order-select";
+import { ActionButton } from "../../../components/action-button";
+import OrderSelect from "../../../components/order-select";
 import { Status } from "@prisma/client";
 
 export const metadata: Metadata = {
@@ -29,31 +26,9 @@ interface OrdersPageProps {
 }
 
 export default async function OrdersPage({ searchParams }: OrdersPageProps) {
-  const user = await currentUser();
-  if (!user) notFound();
-  const id = searchParams?.id;
-  const orderStatuses = searchParams?.status
-    ? [{ status: Status[searchParams?.status as keyof typeof Status] }]
-    : [
-        {
-          status: Status.OPEN,
-        },
-        {
-          status: Status.PAID,
-        },
-      ];
-  const userOrders = await prisma.order
-    .findMany({
-      where: {
-        userId: id,
-        OR: orderStatuses,
-      },
-      include: { products: { include: { product: true } }, parkingLot: true },
-    })
-    .catch(() => []);
   const orders = await prisma.order.findMany({
     where: {
-      OR: orderStatuses,
+      userId: { not: null },
     },
     distinct: ["userId"],
     include: { products: { include: { product: true } }, parkingLot: true },
@@ -63,24 +38,35 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
       },
     ],
   });
-  const filteredOrders =
-    userOrders.length > 0
-      ? userOrders
-      : await prisma.order.findMany({
-          where: {
-            parkingLotId: id,
-            OR: orderStatuses,
-          },
-          include: {
-            products: { include: { product: true } },
-            parkingLot: true,
-          },
-          orderBy: [
-            {
-              name: "asc",
-            },
+  const searchParamsStatus = (searchParams?.status && [
+    { status: Status[searchParams.status as keyof typeof Status] },
+  ]) || [
+    {
+      status: Status.OPEN,
+    },
+    {
+      status: Status.PAID,
+    },
+  ];
+  const filteredOrders = await prisma.order
+    .findMany({
+      where: {
+        AND: {
+          OR: [
+            { userId: searchParams?.id },
+            { parkingLotId: searchParams?.id },
           ],
-        });
+        },
+        OR: searchParamsStatus,
+      },
+      include: { products: { include: { product: true } }, parkingLot: true },
+      orderBy: [
+        {
+          name: "asc",
+        },
+      ],
+    })
+    .catch(() => []);
   const t = await getTranslations("home");
   const parkingLots = (await prisma.parkingLot.findMany()).map(
     ({ id, name }) => ({ id, name: t(name) })
@@ -89,7 +75,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
     <main className="flex flex-col m-4 gap-2">
       <div className="flex gap-10">
         <OrderSelect
-          defaultValue={id ?? "1"}
+          defaultValue={searchParams?.id ?? "1"}
           options={[
             {
               id: "1",
@@ -100,7 +86,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
               name,
             })),
             ...orders.map(({ userId, name }) => ({
-              id: userId,
+              id: userId!,
               name,
             })),
           ]}
@@ -150,20 +136,11 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
                   ))}
                 </TableBody>
               </Table>
-              <Protect
-                role="org:admin"
-                fallback={
-                  <Label color="failure" className="self-start mb-4 mt-auto">
-                    {t("You are not authorized to perform actions on orders.")}
-                  </Label>
-                }
-              >
-                <ActionButton
-                  className="self-start mb-4 mt-auto"
-                  label={order.status == "OPEN" ? t("Sell") : t("Deliver")}
-                  id={order.id}
-                />
-              </Protect>
+              <ActionButton
+                className="self-start mb-4 mt-auto"
+                label={order.status == "OPEN" ? t("Sell") : t("Deliver")}
+                id={order.id}
+              />
             </div>
           </Card>
         ))}

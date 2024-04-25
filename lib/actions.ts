@@ -1,14 +1,9 @@
 "use server";
 
 import prisma from "./prismadb";
-import { currentUser } from "@clerk/nextjs";
-import { notFound } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 export async function closeOrder(id: string) {
-  if (!(await currentUser())) {
-    notFound();
-  }
   await prisma.order
     .update({
       where: { id },
@@ -18,5 +13,4 @@ export async function closeOrder(id: string) {
     })
     .catch(() => {});
   revalidatePath("/[locale]/orders", "page");
-  // revalidatePath("/[locale]/");
 }

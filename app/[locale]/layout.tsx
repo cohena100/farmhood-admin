@@ -22,6 +22,7 @@ import { UserButton } from "@clerk/nextjs";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
 import { cn } from "@/lib/utils";
 import useTextDirection from "@/lib/hooks";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -61,10 +62,10 @@ export default function RootLayout({
           <body className={cn("dark:bg-gray-900", inter.className)}>
             <Flowbite>
               <Navbar fluid border>
-                <NavbarBrand>
-                  <Label className=" text-xl font-semibold text-pink-600 dark:text-pink-600">
-                    תותים משק אריאל במדע🍓🍓🍓
-                  </Label>
+                <NavbarBrand as={Link} href="/">
+                  <span className=" text-xl font-semibold text-pink-600 dark:text-pink-600">
+                    משק אביהו🍓🥒🫐🍅
+                  </span>
                 </NavbarBrand>
                 <NavbarToggle />
                 <NavbarCollapse>
@@ -75,7 +76,7 @@ export default function RootLayout({
                   </div>
                 </NavbarCollapse>
               </Navbar>
-                {children}
+              {children}
             </Flowbite>
           </body>
         </NextIntlClientProvider>

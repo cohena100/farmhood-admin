@@ -35,7 +35,7 @@ model ParkingLot {
 
 model Order {
   id           String         @id @default(uuid())
-  userId       String
+  userId       String?
   name         String
   imageUrl     String
   phone        String

@@ -1,7 +1,5 @@
 import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prismadb";
-import { Protect, currentUser } from "@clerk/nextjs";
-import { notFound } from "next/navigation";
 import {
   Avatar,
   Badge,
@@ -13,12 +11,10 @@ import {
   TableRow,
 } from "flowbite-react";
 import { Link } from "@/navigation";
-import { ActionButton } from "./orders/action-button";
+import { ActionButton } from "../../components/action-button";
 import { Status } from "@prisma/client";
 
 export default async function Home() {
-  const user = await currentUser();
-  if (!user) notFound();
   const orders = await prisma.order.findMany();
   const g: Array<{ title: string; sum: number }> = await prisma.$queryRaw`
 SELECT p.title,
@@ -125,20 +121,11 @@ GROUP BY p.id`;
                 ))}
               </TableBody>
             </Table>
-            <Protect
-              role="org:admin"
-              fallback={
-                <Label color="failure" className="self-start mb-4 mt-auto">
-                  {t("You are not authorized to perform actions on orders.")}
-                </Label>
-              }
-            >
-              <ActionButton
-                className="self-start mb-4 mt-auto"
-                label={order.status == "OPEN" ? t("Sell") : t("Deliver")}
-                id={order.id}
-              />
-            </Protect>
+            <ActionButton
+              className="self-start mb-4 mt-auto"
+              label={order.status == "OPEN" ? t("Sell") : t("Deliver")}
+              id={order.id}
+            />
           </Card>
         ))}
       </div>
