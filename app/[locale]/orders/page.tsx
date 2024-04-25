@@ -58,6 +58,11 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
           ],
         },
         OR: searchParamsStatus,
+        NOT: {
+          products: {
+            none: {},
+          },
+        },
       },
       include: { products: { include: { product: true } }, parkingLot: true },
       orderBy: [
