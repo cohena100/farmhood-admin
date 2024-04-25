@@ -12,7 +12,6 @@ import { ThemeModeScript } from "flowbite-react";
 import {
   Flowbite,
   DarkThemeToggle,
-  Label,
   Navbar,
   NavbarBrand,
   NavbarCollapse,
