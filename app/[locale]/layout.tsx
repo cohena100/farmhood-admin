@@ -17,7 +17,7 @@ import {
 } from "flowbite-react";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
 import { cn } from "@/lib/utils";
-import useTextDirection from "@/lib/hooks";
+import { getLangDir } from "rtl-detect";
 import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -41,7 +41,7 @@ export default function RootLayout({
 }: RootLayoutParams) {
   const messages = useMessages();
   const t = useTranslations("home");
-  const direction = useTextDirection(locale);
+  const direction = getLangDir(locale);
   return (
     <html lang={locale} dir={direction} suppressHydrationWarning>
       <head>
