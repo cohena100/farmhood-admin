@@ -11,6 +11,20 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
+model User {
+  id       String    @id
+  username String    @unique
+  password String
+  sessions Session[]
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
 model Product {
   id      String         @id @default(uuid())
   title   String
@@ -37,7 +51,6 @@ model Order {
   id           String         @id @default(uuid())
   userId       String?
   name         String
-  imageUrl     String
   phone        String
   products     OrderProduct[]
   parkingLot   ParkingLot     @relation(fields: [parkingLotId], references: [id])
