@@ -115,38 +115,47 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         />
       </div>
       <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredOrders.map((order) => (
-          <Card key={order.id}>
-            <div className="flex flex-col h-full">
-              <Avatar img={order.imageUrl ?? ""} className="max-w-fit" rounded>
-                <div className="ms-2 space-y-1 font-medium dark:text-white">
-                  <div>{order.name}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    {order.phone}
+        {filteredOrders.map((order) => {
+          const firstname = order.name.split(" ").slice(0, -1).join(" ") || " ";
+          const lastname = order.name.split(" ").slice(-1).join(" ") || " ";
+          return (
+            <Card key={order.id}>
+              <div className="flex flex-col h-full">
+                <Avatar
+                  className="max-w-fit"
+                  placeholderInitials={firstname.charAt(0) + lastname.at(0)}
+                  size={"sm"}
+                  rounded
+                >
+                  <div className="ms-2 space-y-1 font-medium dark:text-white">
+                    <div>{order.name}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      {order.phone}
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      {t(order.parkingLot.name)}
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    {t(order.parkingLot.name)}
-                  </div>
-                </div>
-              </Avatar>
-              <Table>
-                <TableBody className="divide-y text-start">
-                  {order.products.map((product) => (
-                    <TableRow key={product.productId}>
-                      <TableCell>{t(product.product.title)}</TableCell>
-                      <TableCell>{product.quantity}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <ActionButton
-                className="self-start mb-4 mt-auto"
-                label={order.status == "OPEN" ? t("Sell") : t("Deliver")}
-                id={order.id}
-              />
-            </div>
-          </Card>
-        ))}
+                </Avatar>
+                <Table>
+                  <TableBody className="divide-y text-start">
+                    {order.products.map((product) => (
+                      <TableRow key={product.productId}>
+                        <TableCell>{t(product.product.title)}</TableCell>
+                        <TableCell>{product.quantity}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <ActionButton
+                  className="self-start mb-4 mt-auto"
+                  label={order.status == "OPEN" ? t("Sell") : t("Deliver")}
+                  id={order.id}
+                />
+              </div>
+            </Card>
+          );
+        })}
       </div>
       <Link
         href="/"
