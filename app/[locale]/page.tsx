@@ -90,44 +90,53 @@ GROUP BY p.id`;
         />
       )}
       <div className="grid gap-2 grid-cols-1 sm:grid-cols-2">
-        {unusualOrders.map((order) => (
-          <Card key={order.id}>
-            <Avatar img={order.imageUrl ?? ""} className="max-w-fit" rounded>
-              <div className="ms-2 space-y-1 font-medium dark:text-white">
-                <div>{order.name}</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  {order.phone}
+        {unusualOrders.map((order) => {
+          const firstname = order.name.split(" ").slice(0, -1).join(" ") || " ";
+          const lastname = order.name.split(" ").slice(-1).join(" ") || " ";
+          return (
+            <Card key={order.id}>
+              <Avatar
+                className="max-w-fit"
+                placeholderInitials={firstname.charAt(0) + lastname.at(0)}
+                size={"sm"}
+                rounded
+              >
+                <div className="ms-2 space-y-1 font-medium dark:text-white">
+                  <div>{order.name}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    {order.phone}
+                  </div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    {t(order.parkingLot.name)}
+                  </div>
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  {t(order.parkingLot.name)}
-                </div>
-              </div>
-            </Avatar>
-            <Table>
-              <TableBody className="divide-y">
-                {order.products.map((product) => (
-                  <TableRow key={product.productId}>
-                    <TableCell className=" text-start">
-                      {t(product.product.title)}
-                    </TableCell>
-                    <TableCell className="flex justify-center items-center">
-                      {product.quantity > 4 ? (
-                        <Badge color="pink">{product.quantity}</Badge>
-                      ) : (
-                        product.quantity
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <ActionButton
-              className="self-start mb-4 mt-auto"
-              label={order.status == "OPEN" ? t("Sell") : t("Deliver")}
-              id={order.id}
-            />
-          </Card>
-        ))}
+              </Avatar>
+              <Table>
+                <TableBody className="divide-y">
+                  {order.products.map((product) => (
+                    <TableRow key={product.productId}>
+                      <TableCell className=" text-start">
+                        {t(product.product.title)}
+                      </TableCell>
+                      <TableCell className="flex justify-center items-center">
+                        {product.quantity > 4 ? (
+                          <Badge color="pink">{product.quantity}</Badge>
+                        ) : (
+                          product.quantity
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <ActionButton
+                className="self-start mb-4 mt-auto"
+                label={order.status == "OPEN" ? t("Sell") : t("Deliver")}
+                id={order.id}
+              />
+            </Card>
+          );
+        })}
       </div>
       <Link
         href="/orders"
