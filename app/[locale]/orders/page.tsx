@@ -72,10 +72,10 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
     .catch(() => []);
   const t = await getTranslations("home");
   const parkingLots = (await prisma.parkingLot.findMany()).map(
-    ({ id, name }) => ({ id, name: t(name) })
+    ({ id, name }) => ({ id, name: t(name) }),
   );
   return (
-    <main className="flex flex-col m-4 gap-2">
+    <main className="m-4 flex flex-col gap-2">
       <div className="flex gap-10">
         <OrderSelect
           defaultValue={searchParams?.id ?? "1"}
@@ -120,7 +120,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
           const lastname = order.name.split(" ").slice(-1).join(" ") || " ";
           return (
             <Card key={order.id}>
-              <div className="flex flex-col h-full">
+              <div className="flex h-full flex-col">
                 <Avatar
                   className="max-w-fit"
                   placeholderInitials={firstname.charAt(0) + lastname.at(0)}
@@ -148,7 +148,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
                   </TableBody>
                 </Table>
                 <ActionButton
-                  className="self-start mb-4 mt-auto"
+                  className="mb-4 mt-auto self-start"
                   label={order.status == "OPEN" ? t("Sell") : t("Deliver")}
                   id={order.id}
                 />
@@ -159,7 +159,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
       </div>
       <Link
         href="/"
-        className="font-medium text-pink-600 dark:text-pink-500 underline my-4"
+        className="my-4 font-medium text-pink-600 underline dark:text-pink-500"
       >
         {t("Back")}
       </Link>

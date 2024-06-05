@@ -16,6 +16,7 @@ model User {
   username String    @unique
   password String
   sessions Session[]
+  profile  Profile?
 }
 
 model Session {
@@ -38,6 +39,7 @@ model Profile {
   phone        String
   parkingLot   ParkingLot @relation(fields: [parkingLotId], references: [id])
   parkingLotId String
+  user         User       @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 model ParkingLot {

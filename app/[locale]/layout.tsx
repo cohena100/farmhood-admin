@@ -52,13 +52,13 @@ export default function RootLayout({
           <Flowbite>
             <Navbar fluid border>
               <NavbarBrand as={Link} href="/">
-                <span className=" text-xl font-semibold text-pink-600 dark:text-pink-600">
+                <span className="text-xl font-semibold text-pink-600 dark:text-pink-600">
                   משק אביהו🍓🥒🫐🍅
                 </span>
               </NavbarBrand>
               <NavbarToggle />
               <NavbarCollapse>
-                <div className="flex gap-3 items-center">
+                <div className="flex items-center gap-3">
                   <DarkThemeToggle />
                   <LocaleSwitcher />
                 </div>

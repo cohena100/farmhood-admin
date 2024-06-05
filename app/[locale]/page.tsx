@@ -56,8 +56,8 @@ GROUP BY p.id`;
   });
   const t = await getTranslations("home");
   return (
-    <main className="flex flex-col m-4">
-      <div className="max-w-fit flex flex-col gap-2">
+    <main className="m-4 flex flex-col">
+      <div className="flex max-w-fit flex-col gap-2">
         <Table>
           <TableBody className="divide-y text-start">
             {g.map((r) => (
@@ -86,10 +86,10 @@ GROUP BY p.id`;
       {unusualOrders.length > 0 && (
         <Label
           value={t("Unusual orders") + ":"}
-          className="my-4 font-bold text-lg  text-pink-600 dark:text-pink-500 "
+          className="my-4 text-lg font-bold text-pink-600 dark:text-pink-500"
         />
       )}
-      <div className="grid gap-2 grid-cols-1 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {unusualOrders.map((order) => {
           const firstname = order.name.split(" ").slice(0, -1).join(" ") || " ";
           const lastname = order.name.split(" ").slice(-1).join(" ") || " ";
@@ -115,10 +115,10 @@ GROUP BY p.id`;
                 <TableBody className="divide-y">
                   {order.products.map((product) => (
                     <TableRow key={product.productId}>
-                      <TableCell className=" text-start">
+                      <TableCell className="text-start">
                         {t(product.product.title)}
                       </TableCell>
-                      <TableCell className="flex justify-center items-center">
+                      <TableCell className="flex items-center justify-center">
                         {product.quantity > 4 ? (
                           <Badge color="pink">{product.quantity}</Badge>
                         ) : (
@@ -130,7 +130,7 @@ GROUP BY p.id`;
                 </TableBody>
               </Table>
               <ActionButton
-                className="self-start mb-4 mt-auto"
+                className="mb-4 mt-auto self-start"
                 label={order.status == "OPEN" ? t("Sell") : t("Deliver")}
                 id={order.id}
               />
@@ -140,7 +140,7 @@ GROUP BY p.id`;
       </div>
       <Link
         href="/orders"
-        className="font-medium text-pink-600 dark:text-pink-500 underline my-4"
+        className="my-4 font-medium text-pink-600 underline dark:text-pink-500"
       >
         {t("Orders")}
       </Link>
